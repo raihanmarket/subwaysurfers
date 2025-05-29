@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Subways Surfers</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('images/ssbg.jpeg') no-repeat center center fixed; /* Ganti dengan path lokal */
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative;
+            color: white;
+        }
+
+        /* Elemen dekoratif: kereta bergerak */
+        .train {
+            position: absolute;
+            width: 120px;
+            height: 60px;
+            background: url('images/train.png') no-repeat center; /* Ganti dengan path lokal */
+            background-size: contain;
+            bottom: 20%;
+            animation: moveTrain 10s linear infinite;
+        }
+
+        @keyframes moveTrain {
+            0% { transform: translateX(-150px); }
+            100% { transform: translateX(100vw); }
+        }
+
+        /* Layar game awal */
+        #game-screen {
+            text-align: center;
+            z-index: 1;
+            padding: 20px;
+        }
+        #game-screen h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: bounce 1.5s infinite;
+        }
+        #game-screen p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        #start-button, #auto-play-button {
+            padding: 15px 40px;
+            font-size: 1.5em;
+            background: linear-gradient(45deg, #FFDD00, #FF6F00);
+            border: none;
+            color: #FFF;
+            cursor: pointer;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+        }
+        #start-button:hover, #auto-play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Animasi judul */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Layar jumpscare */
+        #jumpscare-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 10;
+            animation: shake 0.1s infinite;
+        }
+        #jumpscare-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            filter: brightness(1.1) contrast(1.2);
+        }
+
+        /* Animasi getar untuk jumpscare */
+        @keyframes shake {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(3px, 3px); }
+            50% { transform: translate(-3px, -3px); }
+            75% { transform: translate(3px, -3px); }
+            100% { transform: translate(-3px, 3px); }
+        }
+    </style>
+</head>
+<body id="body" oncontextmenu="return false;" onkeydown="return false;" onmousedown="return false;" onload="typeWriter()">
+    <!-- Elemen dekoratif: kereta -->
+    <div class="train"></div>
+
+    <!-- Layar game awal -->
+    <div id="game-screen">
+        <h1 id="title">Subways Surfers Dev</h1>
+     <a href="https://linktr.ee/raihanmarket" <i><p>Developer</p></a></i>
+        <b><p>Klik Mulai Sekarang Untuk Memulai Permainan</p></b>
+       
+        <button id="auto-play-button" onclick="toggleMusic()">Play Music</button>
+        <button id="start-button" onclick="document.getElementById('lagu').play(); fs()">Main Sekarang</button>
+    </div>
+
+    <!-- Layar jumpscare -->
+    <div id="jumpscare-screen">
+        <img id="jumpscare-image" src="images/Jumpscare.jpg" alt="Jumpscare">
+    </div>
+    <audio id="jumpscare-audio" src="sounds/Jumpscare.mp3"></audio>
+    <audio id="lagu" src="sounds/ss.mp3" loop></audio>
+
+    <script>
+        const startButton = document.getElementById('start-button');
+        const gameScreen = document.getElementById('game-screen');
+        const jumpscareScreen = document.getElementById('jumpscare-screen');
+        const jumpscareAudio = document.getElementById('jumpscare-audio');
+        const ambientAudio = document.getElementById('lagu');
+        let isMusicPlaying = false;
+
+        // Fungsi untuk efek ketik di judul
+        let i = 0;
+        const titleText = "Subways Surf";
+        const titleElement = document.getElementById('title');
+        function typeWriter() {
+            if (i < titleText.length) {
+                titleElement.innerHTML = titleText.substring(0, i + 1);
+                i++;
+                setTimeout(typeWriter, 100); // Kecepatan ketik (100ms per karakter)
+            }
+        }
+
+        // Fungsi untuk masuk ke fullscreen
+        function fs() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+        }
+
+        // Fungsi untuk toggle musik
+        function toggleMusic() {
+            if (!isMusicPlaying) {
+                ambientAudio.volume = 0.4;
+                ambientAudio.play().then(() => {
+                    isMusicPlaying = true;
+                    document.getElementById('auto-play-button').textContent = "Stop Music";
+                }).catch(error => {
+                    console.log("Gagal memutar musik: ", error);
+                    alert("Musik gagal dimainkan, coba lagi!");
+                });
+            } else {
+                ambientAudio.pause();
+                isMusicPlaying = false;
+                document.getElementById('auto-play-button').textContent = "Play Music";
+            }
+        }
+
+        // Event listener untuk tombol start
+        startButton.addEventListener('click', () => {
+            // Jeda acak untuk ketegangan
+            const randomDelay = Math.random() * 1000 + 500; // 0.5-1.5 detik
+            setTimeout(() => {
+                gameScreen.style.display = 'none';
+                jumpscareScreen.style.display = 'block';
+                jumpscareAudio.volume = 1.0;
+                jumpscareAudio.play();
+                ambientAudio.pause();
+
+                // Kembali ke layar awal setelah 3 detik
+                setTimeout(() => {
+                    jumpscareScreen.style.display = 'none';
+                    gameScreen.style.display = 'block';
+                    ambientAudio.play();
+                }, 3000);
+            }, randomDelay);
+        });
+    </script>
+</body>
+</html>
